@@ -6,7 +6,7 @@
   "require": {
     "symfony/console": ">=2.0",
     "psr/http-message": "^1.0",
-    "php": "^7.4",
+    "php": "^7.4 || ^8.0",
     "ext-json": "*"
   },
   "autoload": {

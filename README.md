@@ -9,7 +9,7 @@ Extremely useful for:
 * Creating a status page for your system admins or monitoring software
 
 ## Requirements
-- PHP >= 7.4
+- PHP >=7.4 || >=8.0
 
 ## Usage
 
