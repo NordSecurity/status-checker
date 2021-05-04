@@ -12,8 +12,6 @@ jobs:
 
             - name: PHPUnit Tests
               uses: php-actions/phpunit@v2
-              env:
-                  TEST_NAME: Scarlett
               with:
                   bootstrap: vendor/autoload.php
                   configuration: phpunit.xml.dist
