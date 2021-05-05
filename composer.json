@@ -15,12 +15,13 @@
     }
   },
   "suggest": {
-    "illuminate/database": "Needed for DatabaseChecker",
+    "ext-pdo": "Needed for DatabaseChecker",
     "php-amqplib/php-amqplib": "Needed for RabbitMqChecker",
     "influxdb/influxdb-php": "Needed for InfluxDbChecker",
     "predis/predis": "Needed for RedisChecker"
   },
   "require-dev": {
-    "squizlabs/php_codesniffer": "^2.7"
+    "squizlabs/php_codesniffer": "^2.7",
+    "phpunit/phpunit": "^9.5"
   }
 }
