@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Nordsec\StatusChecker\Commands;
 
+use Nordsec\StatusChecker\Services\StatusCheckerInterface;
 use Nordsec\StatusChecker\Services\StatusCheckerService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -34,5 +35,11 @@ class StatusCheckCommand extends Command
         foreach ($details as $checkerName => $status) {
             $output->writeln(sprintf('%s: %s', $checkerName, $status));
         }
+
+        if ($this->statusCheckerService->checkGlobalStatus() !== StatusCheckerInterface::STATUS_OK) {
+            return static::FAILURE;
+        }
+
+        return static::SUCCESS;
     }
 }
