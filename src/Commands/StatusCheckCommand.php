@@ -12,6 +12,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class StatusCheckCommand extends Command
 {
+    public const SUCCESS = 0;
+    public const FAILURE = 1;
+
     private $statusCheckerService;
 
     public function __construct(StatusCheckerService $statusCheckerService)
