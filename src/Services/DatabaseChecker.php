@@ -71,6 +71,9 @@ class DatabaseChecker implements StatusCheckerInterface
         $pdo = $this->createConnection($dsn, $user, $pass, [\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION]);
 
         $pdo->exec($query);
+
+        // explicitly close PDO connection
+        $pdo = null;
     }
 
     private function resolveDsn(array $config): string
