@@ -70,7 +70,8 @@ class DatabaseChecker implements StatusCheckerInterface
 
         $pdo = $this->createConnection($dsn, $user, $pass, [\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION]);
 
-        $pdo->exec($query);
+        $statement = $pdo->prepare($query);
+        $statement->execute();
 
         // explicitly close PDO connection
         $pdo = null;
