@@ -32,11 +32,22 @@ class DatabaseCheckerTest extends TestCase
             ->getMock()
         ;
 
+        $pdoMock = $this
+            ->getMockBuilder(\PDO::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['prepare'])
+            ->getMock();
+
+        $pdoMock
+            ->expects($this->once())
+            ->method('prepare')
+            ->willReturn($this->createMock(\PDOStatement::class));
+
         $databaseCheckerMock
             ->expects(static::once())
             ->method('createConnection')
             ->with(...$expectedPdoArgs)
-            ->willReturn($this->createMock(\PDO::class))
+            ->willReturn($pdoMock)
         ;
 
         $actualResult = $databaseCheckerMock->checkStatus();
