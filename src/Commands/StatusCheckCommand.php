@@ -31,7 +31,7 @@ class StatusCheckCommand extends Command
         $this->setDescription('Perform a status check of connections to database, rabbit-mq, other hosts etc');
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): int
     {
         $details = $this->statusCheckerService->getDetails();
 
