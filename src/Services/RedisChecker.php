@@ -49,6 +49,7 @@ class RedisChecker implements StatusCheckerInterface
         try {
             $cacheClient = new Client($parameters, $options);
             $cacheClient->connect();
+            $cacheClient->randomkey();
         } catch (Exception $exception) {
             return StatusCheckerInterface::STATUS_FAIL;
         }
