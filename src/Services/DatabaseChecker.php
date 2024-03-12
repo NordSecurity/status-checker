@@ -155,7 +155,7 @@ class DatabaseChecker implements StatusCheckerInterface
             'driver' => $details['scheme'],
             'user' => $details['user'] ?? '',
             'password' => $details['pass'] ?? '',
-            'database' => substr($details['path'] ?? null, $additionalPathChars),
+            'database' => substr($details['path'] ?? '', $additionalPathChars),
             'host' => $details['host'] ?? '',
         ];
 
