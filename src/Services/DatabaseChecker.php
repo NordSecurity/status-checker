@@ -157,6 +157,7 @@ class DatabaseChecker implements StatusCheckerInterface
             'password' => $details['pass'] ?? '',
             'database' => substr($details['path'] ?? '', $additionalPathChars),
             'host' => $details['host'] ?? '',
+            'port' => $details['port'] ?? '',
         ];
 
         if (empty($result['database']) && !empty($result['host']) && $result['driver'] === 'sqlite') {
