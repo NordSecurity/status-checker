@@ -105,6 +105,19 @@ class DatabaseCheckerTest extends TestCase
             'expectedResult' => DatabaseChecker::STATUS_OK,
         ];
 
+        $cases['custom_mysql_url_port'] = [
+            'arguments' => [
+                'database.mysql_custom',
+                'mysql://user3:pass3@127.0.0.3:5306/testdb3',
+            ],
+            'expectedPdoArgs' => [
+                'mysql:host=127.0.0.3;port=5306;dbname=testdb3',
+                'user3',
+                'pass3',
+            ],
+            'expectedResult' => DatabaseChecker::STATUS_OK,
+        ];
+
         $cases['doctrine_mysql_parameters'] = [
             'arguments' => [
                 'database.mysql_doctrine',
@@ -266,7 +279,7 @@ class DatabaseCheckerTest extends TestCase
             ],
             'expectedResult' => DatabaseChecker::STATUS_OK,
             'env' => [
-                'DATABASE_URL=mysql://user1:pass1@localhost/test_sf_db',
+                'DATABASE_URL=mysql://user1:pass1@localhost:3306/test_sf_db',
             ],
         ];
 
