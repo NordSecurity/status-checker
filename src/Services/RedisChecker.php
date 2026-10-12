@@ -2,24 +2,21 @@
 
 namespace Nordsec\StatusChecker\Services;
 
-use Exception;
-use Predis\Client;
+use Predis\Client as PredisClient;
+use Redis as RedisClient;
+use Throwable;
 
 class RedisChecker implements StatusCheckerInterface
 {
-    private $name;
-
-    private $configuration;
-
-    private $critical = true;
-
-    public function __construct($name, $configuration)
-    {
-        $this->name = $name;
-        $this->configuration = $configuration;
+    public function __construct(
+        private string $name,
+        private array $configuration = [],
+        private PredisClient|RedisClient|null $client = null,
+        private $critical = true,
+    ) {
     }
 
-    public function setCritical(bool $critical): StatusCheckerInterface
+    public function setCritical(bool $critical): static
     {
         $this->critical = $critical;
 
@@ -43,17 +40,26 @@ class RedisChecker implements StatusCheckerInterface
 
     public function checkStatus(): string
     {
-        $parameters = $this->configuration['parameters'];
-        $options = $this->configuration['options'];
-
         try {
-            $cacheClient = new Client($parameters, $options);
-            $cacheClient->connect();
-            $cacheClient->randomkey();
-        } catch (Exception $exception) {
-            return StatusCheckerInterface::STATUS_FAIL;
+            switch (true) {
+                case $this->client instanceof RedisClient:
+                    $this->client->randomKey();
+                    break;
+                case $this->client instanceof PredisClient:
+                    $this->client->randomkey();
+                    break;
+                default:
+                    $cacheClient = new PredisClient(
+                        $this->configuration['parameters'],
+                        $this->configuration['options'],
+                    );
+                    $cacheClient->connect();
+                    $cacheClient->randomkey();
+            }
+        } catch (Throwable) {
+            return static::STATUS_FAIL;
         }
 
-        return StatusCheckerInterface::STATUS_OK;
+        return static::STATUS_OK;
     }
 }

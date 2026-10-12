@@ -2,7 +2,10 @@
 
 namespace Nordsec\StatusChecker\Services;
 
+use Doctrine\DBAL\Connection as DoctrineConnection;
 use Exception;
+use Illuminate\Database\Connection as IlluminateConnection;
+use PDO;
 
 class DatabaseChecker implements StatusCheckerInterface
 {
@@ -12,17 +15,15 @@ class DatabaseChecker implements StatusCheckerInterface
     protected const DEFAULT_USER = 'root';
     protected const DEFAULT_PASSWORD = '';
 
-    private $name;
-    private $configuration;
-    private $critical = true;
-
-    public function __construct($name, $configuration)
-    {
-        $this->name = $name;
-        $this->configuration = $configuration;
+    public function __construct(
+        private string $name,
+        private array $configuration = [],
+        private IlluminateConnection|DoctrineConnection|null $connection = null,
+        private bool $critical = true,
+    ) {
     }
 
-    public function setCritical(bool $critical): StatusCheckerInterface
+    public function setCritical(bool $critical): static
     {
         $this->critical = $critical;
 
@@ -49,32 +50,46 @@ class DatabaseChecker implements StatusCheckerInterface
         try {
             $this->executeSelect('select 1');
         } catch (Exception $exception) {
-            return StatusCheckerInterface::STATUS_FAIL;
+            return static::STATUS_FAIL;
         }
 
-        return StatusCheckerInterface::STATUS_OK;
+        return static::STATUS_OK;
     }
 
-    protected function createConnection(string $dsn, $user = null, $password = null, array $options = []): \PDO
+    protected function createConnection(string $dsn, $user = null, $password = null, array $options = []): PDO
     {
-        return new \PDO($dsn, $user, $password, $options);
+        return new PDO($dsn, $user, $password, $options);
     }
 
     private function executeSelect(string $query): void
     {
-        $config = $this->resolveConfig();
+        switch (true) {
+            case $this->connection instanceof IlluminateConnection:
+                $this->connection->select($query);
+                break;
 
-        $dsn = $this->resolveDsn($config);
-        $user = $this->resolveUser($config);
-        $pass = $this->resolvePassword($config);
+            case $this->connection instanceof DoctrineConnection:
+                $this->connection
+                    ->prepare($query)
+                    ->executeQuery()
+                    ->fetchOne();
+                break;
 
-        $pdo = $this->createConnection($dsn, $user, $pass, [\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION]);
+            default:
+                $config = $this->resolveConfig();
 
-        $statement = $pdo->prepare($query);
-        $statement->execute();
+                $dsn = $this->resolveDsn($config);
+                $user = $this->resolveUser($config);
+                $pass = $this->resolvePassword($config);
 
-        // explicitly close PDO connection
-        $pdo = null;
+                $pdo = $this->createConnection($dsn, $user, $pass, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+
+                $statement = $pdo->prepare($query);
+                $statement->execute();
+
+                // explicitly close PDO connection
+                $pdo = null;
+        }
     }
 
     private function resolveDsn(array $config): string
