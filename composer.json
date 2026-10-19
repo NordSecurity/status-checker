@@ -16,11 +16,8 @@
   },
   "suggest": {
     "ext-pdo": "Needed for DatabaseChecker",
-    "ext-redis": "Needed for RedisChecker",
-    "doctrine/dbal": "Needed for DatabaseChecker",
-    "illuminate/database": "Needed for DatabaseChecker",
-    "influxdb/influxdb-php": "Needed for InfluxDbChecker",
     "php-amqplib/php-amqplib": "Needed for RabbitMqChecker",
+    "influxdb/influxdb-php": "Needed for InfluxDbChecker",
     "predis/predis": "Needed for RedisChecker"
   },
   "require-dev": {
